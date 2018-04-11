@@ -1,6 +1,7 @@
 // todo: write tests
 #pragma once
 #include "TLink.h"
+#include <iostream>
 #include <fstream>
 #include <stack>
 #include <string>
@@ -21,8 +22,8 @@ public:
 	void InsertDownSection(char *line);
 	void DeleteNext();
 	void DeleteDown();
-	void SetLine(); // todo: rewrite this, change returning type, insert type etc
-	void GetLine(); // todo: rewrite this too
+	void SetLine(const char* string); 
+	const char* GetLine(); 
 
 	TLink* RecursiveRead(std::ifstream& file);
 	void Read(char *fn);

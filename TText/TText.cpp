@@ -1,6 +1,7 @@
 #include "TText.h"
 
 TText::TText() {
+	pFirst = pCurrent = NULL;
 }
 
 void TText::goNextLink() {
@@ -25,23 +26,51 @@ void TText::goPrevLink() {
 }
 
 void TText::InsertNextLine(char *line) {
-	TLink *NewLink = new TLink(line, pCurrent->pNext, NULL);
-	pCurrent->pNext = NewLink;
+	TLink *NewLink;
+	if(pCurrent != NULL){
+		NewLink = new TLink(line, pCurrent->pNext, NULL);
+		pCurrent->pNext = NewLink;
+	}
+	else{
+		NewLink = new TLink(line, NULL, NULL);
+		pFirst = pCurrent = NewLink;
+	}
 }
 
 void TText::InsertNextSection(char *line) {
-	TLink *NewLink = new TLink(line, NULL, pCurrent->pNext);
-	pCurrent->pNext = NewLink;
+	TLink *NewLink;
+	if(pCurrent != NULL){
+		NewLink = new TLink(line, NULL, pCurrent->pNext);
+		pCurrent->pNext = NewLink;
+	}
+	else{
+		NewLink = new TLink(line, NULL, NULL);
+		pFirst = pCurrent = NewLink;
+	}
 }
 
 void TText::InsertDownLine(char *line) {
-	TLink *NewLink = new TLink(line, pCurrent->pDown, NULL);
-	pCurrent->pDown = NewLink;
+	TLink *NewLink;
+	if(pCurrent != NULL){
+		NewLink = new TLink(line, pCurrent->pDown, NULL);
+		pCurrent->pDown = NewLink;
+	}
+	else{
+		NewLink = new TLink(line, NULL, NULL);
+		pFirst = pCurrent = NewLink;
+	}
 }
 
 void TText::InsertDownSection(char *line) {
-	TLink *NewLink = new TLink(line, NULL, pCurrent->pDown);
-	pCurrent->pDown = NewLink;
+	TLink *NewLink;
+	if(pCurrent != NULL){
+		NewLink = new TLink(line, NULL, pCurrent->pDown);
+		pCurrent->pDown = NewLink;
+	}
+	else{
+		NewLink = new TLink(line, NULL, NULL);
+		pFirst = pCurrent = NewLink;
+	}
 }
 
 void TText::DeleteNext() {
@@ -90,18 +119,60 @@ TLink* TText::RecursiveRead(std::ifstream& file) {
 }
 
 void TText::Read(char *fn) {
+	std::ifstream ifs(fn);
+	pFirst = RecursiveRead(ifs);
 }
 
-void RecursivePrint(TLink *tmp) {
+void TText::RecursivePrint(TLink *tmp) {
+	if(tmp != NULL){
+		for(int i = 0; i < level; i++){
+			std::cout << ' ';
+		}
+		std::cout << tmp->str << std::endl;
+		level++;
+		RecursivePrint(tmp->pDown);
+		level--;
+		RecursivePrint(tmp->pNext);
+	}
 }
 
-void Print() {
+void TText::Print() {
+	level = 0;
+	RecursivePrint(pFirst);
 }
 
-void RecursiveSaveText(TLink *tmp, std::ofstream& ofs) {
+void TText::RecursiveSaveText(TLink *tmp, std::ofstream& ofs) {
+	ofs << std::string(tmp->str) << std::endl;
+	if(tmp->pDown != NULL){
+		ofs << std::string("{") << std::endl;
+		RecursiveSaveText(tmp->pDown, ofs);
+		ofs << std::string("}") << std::endl;
+	}
+
+	if(tmp->pNext != NULL){
+		RecursiveSaveText(tmp->pNext, ofs);
+	}
 }
 
-void SaveToFile(std::string filename) {
+void TText::SaveToFile(std::string filename) {
+	std::ofstream ofs(filename);
+	RecursiveSaveText(pFirst, ofs);
 }
+
+
+void TText::SetLine(const char* string){
+	if(strcmp(string, "")){
+		strcpy(pCurrent->str, string);
+	}else{
+		goPrevLink();
+		DeleteNext();
+	}
+}
+
+const char* TText::GetLine(){
+	return pCurrent->str;
+}
+
+
 
 
