@@ -1,4 +1,7 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "TLink.h"
+
 
 TLink::TLink(char *string, TLink *pN, TLink *pD) {
 	pNext = pN;
@@ -31,7 +34,25 @@ char* TLink::getstr(){
 }
 
 void TLink::setstr(char* string){
-	strncpy(str, string, STRMAX);
+	strncpy_s(str, string, STRMAX);
 }
+
+TLink* TLink::getNext() {
+	return pNext;
+}
+
+TLink* TLink::getDown() {
+	return pDown;
+}
+
+void TLink::setNext(TLink* _next) {
+	pNext = _next;
+}
+
+void TLink::setDown(TLink* _down) {
+	pDown = _down;
+}
+
+
 
 
