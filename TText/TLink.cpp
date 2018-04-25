@@ -8,7 +8,7 @@ TLink::TLink(char *string, TLink *pN, TLink *pD) {
 }
 
 
-std::ofstream& operator<<(std::ofstream& ofs, const TLink& link){
+std::ofstream& operator<<(std::ofstream &ofs, const TLink &link){
 	ofs << link.str;
 
 	return ofs;
@@ -32,6 +32,23 @@ char* TLink::getstr(){
 
 void TLink::setstr(char* string){
 	strncpy(str, string, STRMAX);
+}
+
+void* TLink::operator new(size_t size) {
+	TLink* tmp = (TLink*)mem.pFree;
+	if (mem.pFree != NULL) {
+		mem.pFree = ((TLink*)mem.pFree)->pNext;
+	}
+
+	return tmp;
+}
+
+void TLink::operator delete(void* p) {
+	TLink* tmp = (TLink*)p;
+
+	tmp->pNext = (TLink*)mem.pFree;
+	str = "";
+	mem.pFree = tmp;
 }
 
 

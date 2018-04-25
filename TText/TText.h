@@ -8,7 +8,7 @@
 
 class TText {
 	TLink *pFirst, *pCurrent;
-	std::stack<TLink*> st;
+	std::stack<TLink* > st;
 	int level;
 
 public:
