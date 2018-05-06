@@ -1,10 +1,15 @@
 #pragma once
+
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <iostream>
 #include <fstream>
 #include <string>
 
+class TLink;
+
 struct TMem {
-	void *pFirst, *pFree, *pLast;
+	TLink *pFirst, *pFree, *pLast;
 };
 
 class TLink {

@@ -15,21 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\textcontainer\TText\TText.cpp">
+    <ClCompile Include="..\TText\TLink.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\textcontainer\TText\TLink.cpp">
+    <ClCompile Include="..\TText\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\textcontainer\TText\main.cpp">
+    <ClCompile Include="..\TText\TText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\textcontainer\TText\TLink.h">
+    <ClInclude Include="..\TText\TLink.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\textcontainer\TText\TText.h">
+    <ClInclude Include="..\TText\TText.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>

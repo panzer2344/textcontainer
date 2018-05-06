@@ -10,6 +10,15 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\TText\main.cpp" />
+    <ClCompile Include="..\TText\TLink.cpp" />
+    <ClCompile Include="..\TText\TText.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\TText\TLink.h" />
+    <ClInclude Include="..\TText\TText.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{65C72D63-9C66-410C-A2CA-0B64430FAB51}</ProjectGuid>
     <RootNamespace>text</RootNamespace>
@@ -61,15 +70,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\textcontainer\TText\main.cpp" />
-    <ClCompile Include="..\textcontainer\TText\TLink.cpp" />
-    <ClCompile Include="..\textcontainer\TText\TText.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\textcontainer\TText\TLink.h" />
-    <ClInclude Include="..\textcontainer\TText\TText.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

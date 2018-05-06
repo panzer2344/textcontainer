@@ -1,3 +1,4 @@
+#pragma once
 #include "TText.h"
 
 TText::TText() {
@@ -92,7 +93,7 @@ void TText::DeleteDown() {
 
 TLink* TText::RecursiveRead(std::ifstream& file) {
 	char buffer[80];
-	TLink *tmp = NULL, *pFirst;
+	TLink *tmp = NULL, *pFirst = NULL;
 	
 	while (!file.eof()) {
 		file.getline(buffer, 80, '\n');

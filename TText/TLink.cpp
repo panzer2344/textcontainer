@@ -1,3 +1,4 @@
+#pragma once
 #include "TLink.h"
 
 TLink::TLink(char *string, TLink *pN, TLink *pD) {
@@ -35,20 +36,20 @@ void TLink::setstr(char* string){
 }
 
 void* TLink::operator new(size_t size) {
-	TLink* tmp = (TLink*)mem.pFree;
-	if (mem.pFree != NULL) {
-		mem.pFree = ((TLink*)mem.pFree)->pNext;
-	}
+	//TLink* tmp = mem.pFree;
+	//if (mem.pFree != NULL) {
+	//	mem.pFree = mem.pFree->pNext;
+	//}
 
-	return tmp;
+	//return tmp;
+	return NULL;
 }
 
 void TLink::operator delete(void* p) {
 	TLink* tmp = (TLink*)p;
 
-	tmp->pNext = (TLink*)mem.pFree;
-	str = "";
-	mem.pFree = tmp;
+	//tmp->pNext = mem.pFree;
+	//mem.pFree = tmp;
 }
 
 

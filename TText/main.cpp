@@ -3,22 +3,79 @@
 
 #include <string>
 
+#define max 32
+#define min 1
+
+void UpMenu(int &flagBlue, short &pos) {
+	if (flagBlue != min) {
+		flagBlue = flagBlue >> 1;
+		pos--;
+	}
+}
+
+void DownMenu(int &flagBlue, short &pos) {
+	if (flagBlue != max) {
+		flagBlue = flagBlue << 1;
+		pos++;
+	}
+}
+
+void EnterMenu(int &flagBlue, TText &text, int &state) {
+	char input[80];
+
+	if (flagBlue & 1) {
+		std::cin >> input;
+		text.InsertNextLine(input);
+		state = 1;
+		text.Print();
+	}
+
+	if (flagBlue & 2) {
+		std::cin >> input;
+		text.InsertDownLine(input);
+		state = 1;
+		text.Print();
+	}
+
+	if (flagBlue & 4) {
+		std::cin >> input;
+		text.InsertNextSection(input);
+		state = 1;
+		text.Print();
+	}
+
+	if (flagBlue & 8) {
+		std::cin >> input;
+		text.InsertDownSection(input);
+		state = 1;
+		text.Print();
+	}
+
+	if (flagBlue & 16) {
+		exit(0);
+	}
+
+	if (flagBlue & 32) {
+		state = 0;
+	}
+}
+
 void PrintMenu(int flag) {
 	
 	if (flag & 1) {
-		std::cout << "0 - write next line" << std::endl;
+		std::cout << "0 - input next line" << std::endl;
 	}
 
 	if (flag & 2) {
-		std::cout << "1 - write down line" << std::endl;
+		std::cout << "1 - input down line" << std::endl;
 	}
 
 	if (flag & 4) {
-		std::cout << "2 - write next section" << std::endl;
+		std::cout << "2 - input next section" << std::endl;
 	}
 
 	if (flag & 8) {
-		std::cout << "3 - write down section" << std::endl;
+		std::cout << "3 - input down section" << std::endl;
 	}
 	
 	if (flag & 16) {
@@ -50,19 +107,46 @@ int main() {
 
 	hwndConsole = GetConsoleWindow();
 
+	int state = 1;
+	int flagBlue = 1;
+	short pos = 0;
+
 	while (1) {
-		int state = 1;
 
+		SetConsoleTextAttribute(hndlOut, 15);
+		PrintMenu(63);
+
+		SetConsoleCursorPosition(hndlOut, { 0, pos });
 		SetConsoleTextAttribute(hndlOut, FOREGROUND_RED | BACKGROUND_BLUE);
-		PrintMenu(1);
+		PrintMenu(flagBlue);
 
-		SetConsoleTextAttribute(hndlOut, BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED);
-		SetConsoleTextAttribute(hndlOut, COMMON_LVB_REVERSE_VIDEO);
-		SetConsoleTextAttribute(hndlOut, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-		PrintMenu(62);
+		SetConsoleTextAttribute(hndlOut, 15);
 
-		std::cout << std::endl << std::endl << "Print there: ";
-		Input(state, input);
+		/*std::cout << std::endl << std::endl << "Print there: ";
+		Input(state, input);*/
+
+		while (1) {
+		
+			if (GetAsyncKeyState(VK_UP)) {
+				UpMenu(flagBlue, pos);
+				state = 0;
+				Sleep(50);
+				break;
+			}
+
+			if (GetAsyncKeyState(VK_DOWN)) {
+				DownMenu(flagBlue, pos);
+				state = 0;
+				Sleep(50);
+				break;
+			}
+
+			if (GetAsyncKeyState(VK_RETURN)) {
+				SetConsoleCursorPosition(hndlOut, { 0, 5 });
+				EnterMenu(flagBlue, text, state);
+			}
+		}
+
 		if (!state) std::system("cls");
 	}
 
