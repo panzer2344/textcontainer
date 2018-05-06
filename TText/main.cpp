@@ -1,153 +1,92 @@
 #include "TText.h"
 #include <Windows.h>
 
+#include <iostream>
+
 #include <string>
 
-#define max 32
-#define min 1
+bool WhereCursor(COORD &coord) {
+	HANDLE hndlOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
 
-void UpMenu(int &flagBlue, short &pos) {
-	if (flagBlue != min) {
-		flagBlue = flagBlue >> 1;
-		pos--;
+	if (GetConsoleScreenBufferInfo(hndlOut, &csbi)) {
+		coord.X = csbi.dwCursorPosition.X;
+		coord.Y = csbi.dwCursorPosition.Y;
+
+		return true;
 	}
+	else return false;
 }
 
-void DownMenu(int &flagBlue, short &pos) {
-	if (flagBlue != max) {
-		flagBlue = flagBlue << 1;
-		pos++;
-	}
-}
+bool MoveCursor(int deltaX, int deltaY) {
+	HANDLE hndlOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD coord = {0, 0};
 
-void EnterMenu(int &flagBlue, TText &text, int &state) {
-	char input[80];
-
-	if (flagBlue & 1) {
-		std::cin >> input;
-		text.InsertNextLine(input);
-		state = 1;
-		text.Print();
-	}
-
-	if (flagBlue & 2) {
-		std::cin >> input;
-		text.InsertDownLine(input);
-		state = 1;
-		text.Print();
-	}
-
-	if (flagBlue & 4) {
-		std::cin >> input;
-		text.InsertNextSection(input);
-		state = 1;
-		text.Print();
-	}
-
-	if (flagBlue & 8) {
-		std::cin >> input;
-		text.InsertDownSection(input);
-		state = 1;
-		text.Print();
-	}
-
-	if (flagBlue & 16) {
-		exit(0);
-	}
-
-	if (flagBlue & 32) {
-		state = 0;
-	}
-}
-
-void PrintMenu(int flag) {
+	if(!WhereCursor(coord)) return false;
 	
-	if (flag & 1) {
-		std::cout << "0 - input next line" << std::endl;
-	}
+	coord.X += deltaX;
+	coord.Y += deltaY;
 
-	if (flag & 2) {
-		std::cout << "1 - input down line" << std::endl;
-	}
+	if(!SetConsoleCursorPosition(hndlOut, coord))
+		return false;
 
-	if (flag & 4) {
-		std::cout << "2 - input next section" << std::endl;
-	}
-
-	if (flag & 8) {
-		std::cout << "3 - input down section" << std::endl;
-	}
-	
-	if (flag & 16) {
-		std::cout << "4 - exit program" << std::endl;
-	}
-
-	if (flag & 32) {
-		std::cout << "5 - print menu" << std::endl;
-	}
+	return true;
 }
 
-void Input(int &state, std::string &_in) {
-	if (state == 1) {
-		std::cin >> _in;
-	}
-	state = 0;
+bool SetCursorPos(COORD coord) {
+	HANDLE hndlOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	if(!SetConsoleCursorPosition(hndlOut, coord))
+		return false;
+	else return true;
+}
+
+bool GoNext(int step) {
+	if(!MoveCursor(0, step))
+		return false;
+	return true;
 }
 
 int main() {
 	TText text;
-	std::string input;
+	TLink::InitMem(2000);
+	COORD coord = {0, 0};
 
-	HANDLE hndlOut;
-	HANDLE hndlIn;
-	HWND hwndConsole;
+	text.InsertNextLine("l1");
+	text.InsertDownLine("l1.1");
+	text.goDownLink();
+	text.InsertDownLine("l1.1.1");
+	text.InsertDownLine("l1.2.1");
+	text.Reset();
 
-	hndlOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	hndlIn = GetStdHandle(STD_INPUT_HANDLE);
+	while (true) {
+		bool exit = false;
 
-	hwndConsole = GetConsoleWindow();
+		text.Print();
+		SetCursorPos(coord);
 
-	int state = 1;
-	int flagBlue = 1;
-	short pos = 0;
-
-	while (1) {
-
-		SetConsoleTextAttribute(hndlOut, 15);
-		PrintMenu(63);
-
-		SetConsoleCursorPosition(hndlOut, { 0, pos });
-		SetConsoleTextAttribute(hndlOut, FOREGROUND_RED | BACKGROUND_BLUE);
-		PrintMenu(flagBlue);
-
-		SetConsoleTextAttribute(hndlOut, 15);
-
-		/*std::cout << std::endl << std::endl << "Print there: ";
-		Input(state, input);*/
-
-		while (1) {
-		
-			if (GetAsyncKeyState(VK_UP)) {
-				UpMenu(flagBlue, pos);
-				state = 0;
-				Sleep(50);
-				break;
-			}
-
+		while (true) {
 			if (GetAsyncKeyState(VK_DOWN)) {
-				DownMenu(flagBlue, pos);
-				state = 0;
-				Sleep(50);
-				break;
+				int step = 0;
+				text.DownCount(&step);
+
+				if (GoNext(step)) {
+					text.goNextLink();
+				}
+
+				std::cout << step << std::endl;
+
+				Sleep(150);
 			}
 
-			if (GetAsyncKeyState(VK_RETURN)) {
-				SetConsoleCursorPosition(hndlOut, { 0, 5 });
-				EnterMenu(flagBlue, text, state);
+			if (GetAsyncKeyState(VK_ESCAPE)) {
+				exit = true;
+				Sleep(50);
+				break;
 			}
 		}
 
-		if (!state) std::system("cls");
+		if (exit) break;
 	}
 
 	return 0;

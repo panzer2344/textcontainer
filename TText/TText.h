@@ -1,15 +1,21 @@
 // todo: write tests
 #pragma once
 #include "TLink.h"
+
 #include <iostream>
 #include <fstream>
 #include <stack>
 #include <string>
 
+class TLink;
+
 class TText {
 	TLink *pFirst, *pCurrent;
 	std::stack<TLink* > st;
 	int level;
+
+private: 
+	void clearStack(std::stack<TLink* > stack);
 
 public:
 	TText();
@@ -31,4 +37,17 @@ public:
 	void Print();
 	void RecursiveSaveText(TLink *tmp, std::ofstream& ofs);
 	void SaveToFile(std::string filename);
+
+	void Reset();
+	bool IsEnd();
+	void GoNext();
+	void DownCount(int& count);
+
+	bool HaveNext();
+	bool HaveDown();
+
+	TLink* getCurr();
+	void setCurr(TLink* _pCurr);
+
+	bool isDownLevel();
 }; 

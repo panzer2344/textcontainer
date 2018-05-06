@@ -1,7 +1,3 @@
-﻿  main.cpp
-c:\users\lexat\documents\github\textcontainer\ttext\main.cpp(6): warning C4005: max: изменение макроопределения
-  c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(193): note: см. предыдущее определение "max"
-c:\users\lexat\documents\github\textcontainer\ttext\main.cpp(7): warning C4005: min: изменение макроопределения
-  c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(197): note: см. предыдущее определение "min"
+﻿  TText.cpp
   text.vcxproj -> C:\Users\lexat\Documents\GitHub\textcontainer\Debug\text.exe
   text.vcxproj -> C:\Users\lexat\Documents\GitHub\textcontainer\Debug\text.pdb (Full PDB)
