@@ -20,6 +20,7 @@ class TLink {
 	char str[STRMAX];
 	TLink *pNext, *pDown;
 	static TMem mem;
+	bool marked;
 
 public:
 	TLink(char *string = NULL, TLink *pN = NULL, TLink *pD = NULL);
@@ -45,6 +46,11 @@ public:
 	static void InitMem(size_t s);
 	static void MemClean(TText &txt);
 	static void printFree();
+
+	void mark();
+	void unmark();
+
+	bool isMarked();
 };
 
 

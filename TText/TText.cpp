@@ -208,8 +208,36 @@ void TText::GoNext() {
 	}
 }
 
-void TText::DownCount(int& count) {
+int TText::DownCount() {
+	TLink *tmp = pCurrent;
+	int tmpSize = 0;
+	int count = 0;
 
+	if (pCurrent->getDown() == NULL) return 0;
+	pCurrent = pCurrent->getDown();
+
+	clearStack(st);
+	st.push(pCurrent);
+
+	do {
+		GoNext();
+		pCurrent->unmark();
+	} while (!IsEnd());
+
+	pCurrent = tmp->getDown();
+	st.push(pCurrent);
+
+	do {
+		GoNext();
+		if (!pCurrent->isMarked()) {
+			count++;
+			pCurrent->mark();
+		}
+	} while (!IsEnd());
+
+	pCurrent = tmp;
+
+	return count;
 }
 
 void TText::clearStack(std::stack<TLink* > stack) {

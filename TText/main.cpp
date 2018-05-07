@@ -27,6 +27,8 @@ bool MoveCursor(int deltaX, int deltaY) {
 	coord.X += deltaX;
 	coord.Y += deltaY;
 
+	if ((coord.X < 0) || (coord.Y < 0)) return false;
+
 	if(!SetConsoleCursorPosition(hndlOut, coord))
 		return false;
 
@@ -68,16 +70,58 @@ int main() {
 		while (true) {
 			if (GetAsyncKeyState(VK_DOWN)) {
 				int step = 0;
-				text.DownCount(&step);
+				step = text.DownCount() + 1;
 
 				if (GoNext(step)) {
-					text.goNextLink();
-				}
+					if (text.HaveNext()) { 
+						text.goNextLink();
+					}
+					else {
+						char tmpStr[80];
+						int tmpStrLen = 0;
 
-				std::cout << step << std::endl;
+						std::cout << "print here(to undo input - write /back): ";
+						std::cin >> tmpStr;
+
+						tmpStrLen = strlen(tmpStr);
+
+						if (!strcmp(tmpStr, "/back")) {
+							MoveCursor(0, -1);
+							std::cout << "                                              ";
+							MoveCursor(-46, -step);
+						}
+						else {
+							text.InsertNextLine(tmpStr);
+							text.goNextLink();
+							MoveCursor(0, -1);
+							std::cout << "                                         ";
+
+							for (int i = 0; i < tmpStrLen; i++) {
+								std::cout << " ";
+							}
+							MoveCursor(-41, 0);
+							MoveCursor(-tmpStrLen, 0);
+								
+							std::cout << tmpStr;
+							MoveCursor(-tmpStrLen, 0);
+						}
+					}
+				}
 
 				Sleep(150);
 			}
+
+			if (GetAsyncKeyState(VK_UP)) {
+				int step = 0;
+				text.goPrevLink();
+				step = - text.DownCount() - 1;
+
+				GoNext(step);
+
+				Sleep(150);
+			}
+
+			//if(GetAsyncKeyState(VK_UP))
 
 			if (GetAsyncKeyState(VK_ESCAPE)) {
 				exit = true;

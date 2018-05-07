@@ -41,7 +41,7 @@ public:
 	void Reset();
 	bool IsEnd();
 	void GoNext();
-	void DownCount(int& count);
+	int DownCount();
 
 	bool HaveNext();
 	bool HaveDown();

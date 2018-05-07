@@ -111,6 +111,16 @@ void TLink::setDown(TLink* tlDown) {
 	pDown = tlDown;
 }
 
+void TLink::mark() {
+	marked = true;
+}
 
+void TLink::unmark() {
+	marked = false;
+}
+
+bool TLink::isMarked() {
+	return marked;
+}
 
 
