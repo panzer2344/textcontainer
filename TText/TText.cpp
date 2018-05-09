@@ -184,10 +184,11 @@ void TText::Reset() {
 	pCurrent = pFirst;
 	clearStack(st);
 	st.push(pCurrent);
-	if (pFirst->getDown())
+	/*if (pFirst->getDown())
 		st.push(pFirst->getDown());
 	if (pFirst->getNext())
 		st.push(pFirst->getNext());
+		*/
 }
 
 
@@ -210,13 +211,15 @@ void TText::GoNext() {
 
 int TText::DownCount() {
 	TLink *tmp = pCurrent;
+	std::stack<TLink* > emptyStack;
 	int tmpSize = 0;
 	int count = 0;
 
 	if (pCurrent->getDown() == NULL) return 0;
 	pCurrent = pCurrent->getDown();
 
-	clearStack(st);
+	//clearStack(st);
+	st = emptyStack;
 	st.push(pCurrent);
 
 	do {

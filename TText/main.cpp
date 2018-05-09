@@ -5,6 +5,35 @@
 
 #include <string>
 
+void cls()
+{
+	COORD coordScreen = { 0, 0 }; 
+	DWORD cCharsWritten;
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	DWORD dwConSize;
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	if (!GetConsoleScreenBufferInfo(hConsole, &csbi)){
+		return;
+	}
+
+	dwConSize = csbi.dwSize.X * csbi.dwSize.Y;
+
+	if (!FillConsoleOutputCharacter(hConsole, (TCHAR) ' ', dwConSize, coordScreen, &cCharsWritten)){
+		return;
+	}
+
+	if (!GetConsoleScreenBufferInfo(hConsole, &csbi)){
+		return;
+	}
+
+	if (!FillConsoleOutputAttribute(hConsole, csbi.wAttributes,	dwConSize,coordScreen, &cCharsWritten)){
+		return;
+	}
+
+	SetConsoleCursorPosition(hConsole, coordScreen);
+}
+
 bool WhereCursor(COORD &coord) {
 	HANDLE hndlOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -54,7 +83,9 @@ int main() {
 	TLink::InitMem(2000);
 	COORD coord = {0, 0};
 
+	text.InsertNextLine(" ");
 	text.InsertNextLine("l1");
+	text.goNextLink();
 	text.InsertDownLine("l1.1");
 	text.goDownLink();
 	text.InsertDownLine("l1.1.1");
@@ -72,62 +103,224 @@ int main() {
 				int step = 0;
 				step = text.DownCount() + 1;
 
-				if (GoNext(step)) {
-					if (text.HaveNext()) { 
+				if (text.HaveNext()) { 
+					if (GoNext(step)) {
 						text.goNextLink();
 					}
-					else {
-						char tmpStr[80];
-						int tmpStrLen = 0;
-
-						std::cout << "print here(to undo input - write /back): ";
-						std::cin >> tmpStr;
-
-						tmpStrLen = strlen(tmpStr);
-
-						if (!strcmp(tmpStr, "/back")) {
-							MoveCursor(0, -1);
-							std::cout << "                                              ";
-							MoveCursor(-46, -step);
-						}
-						else {
-							text.InsertNextLine(tmpStr);
-							text.goNextLink();
-							MoveCursor(0, -1);
-							std::cout << "                                         ";
-
-							for (int i = 0; i < tmpStrLen; i++) {
-								std::cout << " ";
-							}
-							MoveCursor(-41, 0);
-							MoveCursor(-tmpStrLen, 0);
-								
-							std::cout << tmpStr;
-							MoveCursor(-tmpStrLen, 0);
-						}
-					}
 				}
+				else {
+					char tmpStr[80];
+					int tmpStrLen = 0;
+
+					text.InsertNextLine(" ");
+					text.goNextLink();
+					WhereCursor(coord);
+					cls();
+					text.Print();
+					SetCursorPos(coord);
+					GoNext(step);
+					WhereCursor(coord);
+
+					std::cout << "print here(to undo input - write /back): ";
+					std::cin >> tmpStr;
+
+					tmpStrLen = strlen(tmpStr);
+
+					if (!strcmp(tmpStr, "/back")) {
+						MoveCursor(0, -1);
+						std::cout << "                                              ";
+						MoveCursor(-46, -step);
+						text.goPrevLink();
+						text.DeleteNext();
+					}
+					else {
+						text.SetLine(tmpStr);
+						SetCursorPos(coord);
+						std::cout << "                                         ";
+
+						for (int i = 0; i < tmpStrLen; i++) {
+							std::cout << " ";
+						}
+						MoveCursor(-41, 0);
+						MoveCursor(-tmpStrLen, 0);
+								
+						std::cout << tmpStr;
+						MoveCursor(-tmpStrLen, 0);
+					}
+			}
 
 				Sleep(150);
 			}
 
 			if (GetAsyncKeyState(VK_UP)) {
 				int step = 0;
-				text.goPrevLink();
-				step = - text.DownCount() - 1;
+				TLink* tmplink = text.getCurr();
 
-				GoNext(step);
+				WhereCursor(coord);
+
+				if (coord.Y != 0) {
+
+					text.goPrevLink();
+					if (text.getCurr()->getDown() == tmplink) {
+						if(coord.Y != 1) MoveCursor(-1, -1);
+					}
+					else {
+						step = -text.DownCount() - 1;
+						GoNext(step);
+					}
+				}
+				Sleep(150);
+			}
+
+			if (GetAsyncKeyState(VK_RIGHT)) {
+				if (text.HaveDown()) {
+					text.goDownLink();
+					MoveCursor(1, 1);
+
+					Sleep(150);
+				}
+				else {
+					char tmpStr[80];
+					int tmpStrLen;
+
+					text.InsertDownLine(" ");
+					text.goDownLink();
+					WhereCursor(coord);
+					cls();
+					text.Print();
+					SetCursorPos(coord);
+					MoveCursor(1, 1);
+					WhereCursor(coord);
+					std::cout << "input(to undo - write /back):";
+					std::cin >> tmpStr;
+
+					tmpStrLen = strlen(tmpStr);
+
+					if (!strcmp(tmpStr, "/back")) {
+						MoveCursor(0, -1);
+						std::cout << "                                  ";
+						MoveCursor(-36, -1);
+						text.goPrevLink();
+						text.DeleteDown();
+					}
+					else {
+						text.SetLine(tmpStr);
+						SetCursorPos(coord);
+						
+						std::cout << "                             ";
+						for (int i = 0; i < tmpStrLen; i++) {
+							std::cout << " ";
+						}
+						MoveCursor(-tmpStrLen - 29, 0);
+						std::cout << tmpStr;
+						MoveCursor(-tmpStrLen, 0);
+					}
+				}
+			}
+
+			if (GetAsyncKeyState(VK_TAB) && !GetAsyncKeyState(VK_LCONTROL)) {
+				char tmpStr[80];
+				int tmpStrLen;
+
+				text.InsertDownSection(" ");
+				text.goDownLink();
+
+				WhereCursor(coord);
+				cls();
+				text.Print();
+				SetCursorPos(coord);
+				MoveCursor(1, 1);
+				WhereCursor(coord);
+				std::cout << "input: ";
+				std::cin >> tmpStr;
+
+				tmpStrLen = strlen(tmpStr);
+
+				text.SetLine(tmpStr);
+				SetCursorPos(coord);
+
+				MoveCursor(-8, 0);
+				std::cout << "       ";
+				for (int i = 0; i < tmpStrLen; i++) {
+					std::cout << " ";
+				}
+				MoveCursor(-tmpStrLen - 7, 0);
+				std::cout << tmpStr;
+				MoveCursor(-tmpStrLen, 0);
 
 				Sleep(150);
 			}
 
-			//if(GetAsyncKeyState(VK_UP))
+			if (GetAsyncKeyState(VK_TAB) && GetAsyncKeyState(VK_LCONTROL)) {
+				char tmpStr[80];
+				int tmpStrLen;
+				int step = text.DownCount() + 1;
+
+				text.InsertNextSection(" ");
+				text.goNextLink();
+
+				WhereCursor(coord);
+				cls();
+				text.Print();
+				SetCursorPos(coord);
+				GoNext(step);
+				WhereCursor(coord);
+				std::cout << "input: ";
+				std::cin >> tmpStr;
+
+				tmpStrLen = strlen(tmpStr);
+
+				text.SetLine(tmpStr);
+				SetCursorPos(coord);
+
+				MoveCursor(-8, 0);
+				std::cout << "       ";
+				for (int i = 0; i < tmpStrLen; i++) {
+					std::cout << " ";
+				}
+				MoveCursor(-tmpStrLen - 7, 0);
+				std::cout << tmpStr;
+				MoveCursor(-tmpStrLen, 0);
+
+				Sleep(150);
+			}
+
+			if (GetAsyncKeyState(VK_DELETE)) {
+				if (text.getCurr()->getstr() != " ") {
+					TLink* tmpLink = text.getCurr();
+
+					text.goPrevLink();
+					if (text.getCurr() == tmpLink) {
+						text.Reset();
+					}
+					if (text.getCurr()->getDown() == tmpLink) {
+						text.DeleteDown();
+						if(text.HaveDown()) text.goDownLink();
+						else MoveCursor(-1, -1);
+					}
+					else {
+						text.DeleteNext();
+						if(text.HaveNext()) text.goNextLink();
+						else MoveCursor(0, -1);
+					}
+					
+					WhereCursor(coord);
+					cls();
+					text.Print();
+					SetCursorPos(coord);
+				}				
+
+				Sleep(150);
+			}
 
 			if (GetAsyncKeyState(VK_ESCAPE)) {
 				exit = true;
 				Sleep(50);
 				break;
 			}
+
+			WhereCursor(coord);
+			if (coord.Y = 0) coord.Y = 1;
 		}
 
 		if (exit) break;
