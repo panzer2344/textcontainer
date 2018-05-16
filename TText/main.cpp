@@ -285,7 +285,7 @@ int main() {
 				Sleep(150);
 			}
 
-			if (GetAsyncKeyState(VK_DELETE)) {
+			if (!GetAsyncKeyState(VK_LCONTROL) && GetAsyncKeyState(VK_DELETE)) {
 				if (text.getCurr()->getstr() != " ") {
 					TLink* tmpLink = text.getCurr();
 
@@ -310,8 +310,62 @@ int main() {
 					SetCursorPos(coord);
 				}				
 
+				TLink::MemClean(text);
 				Sleep(150);
 			}
+
+			if (GetAsyncKeyState(VK_LCONTROL) && GetAsyncKeyState(VK_DELETE)) {
+				cls();
+
+				TLink::MemClean(text);
+				TLink::printFree();
+
+				Sleep(150);
+			}
+
+			if (GetAsyncKeyState(VK_LCONTROL) && GetAsyncKeyState(0x53)) {
+				char filename[1024];
+
+				WhereCursor(coord);
+				cls();
+
+				std::cout << "Enter the file name for record(or /back to return): ";
+				std::cin >> filename;
+				if (strcmp(filename, "/back")) {
+					text.SaveToFile(filename);
+				}
+
+				cls();
+				text.Print();
+				SetCursorPos(coord);
+
+				Sleep(150);
+			}
+
+			if (GetAsyncKeyState(VK_F1)) {
+				char filename[1024];
+
+				WhereCursor(coord);
+				cls();
+
+				std::cout << "Enter the file name for record(or /back to return): ";
+				std::cin >> filename;
+				if (strcmp(filename, "/back")) {
+					if (GetFileAttributes(filename) != DWORD(-1)) {
+						text.Read(filename);
+					}
+					coord = { 0, 0 };
+					text.Reset();
+				}
+
+				cls();
+				text.Print();
+				SetCursorPos(coord);
+
+				Sleep(150);
+			}
+
+			
 
 			if (GetAsyncKeyState(VK_ESCAPE)) {
 				exit = true;

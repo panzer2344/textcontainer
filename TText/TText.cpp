@@ -184,11 +184,6 @@ void TText::Reset() {
 	pCurrent = pFirst;
 	clearStack(st);
 	st.push(pCurrent);
-	/*if (pFirst->getDown())
-		st.push(pFirst->getDown());
-	if (pFirst->getNext())
-		st.push(pFirst->getNext());
-		*/
 }
 
 

@@ -90,6 +90,10 @@ void TLink::MemClean(TText &txt) {
 void TLink::printFree() {
 	TLink *tmp = mem.pFree;
 	while (tmp != NULL) {
+		if (!strcmp(tmp->str, "\\")) { 
+			break;
+		}
+
 		std::cout << tmp->str << std::endl;
 		tmp = tmp->pNext;
 	}
