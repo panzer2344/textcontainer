@@ -206,15 +206,15 @@ void TText::GoNext() {
 
 int TText::DownCount() {
 	TLink *tmp = pCurrent;
-	std::stack<TLink* > emptyStack;
+	std::stack<TLink* > tmpStack;
 	int tmpSize = 0;
 	int count = 0;
 
 	if (pCurrent->getDown() == NULL) return 0;
 	pCurrent = pCurrent->getDown();
 
-	//clearStack(st);
-	st = emptyStack;
+	tmpStack = st;
+	clearStack(st);
 	st.push(pCurrent);
 
 	do {
@@ -233,6 +233,7 @@ int TText::DownCount() {
 		}
 	} while (!IsEnd());
 
+	st = tmpStack;
 	pCurrent = tmp;
 
 	return count;
@@ -266,6 +267,10 @@ bool TText::isDownLevel() {
 	st.push(tmp);
 
 	return tmp->getDown() == pCurrent;
+}
+
+int TText::GetLevel() {
+	return level;
 }
 
 

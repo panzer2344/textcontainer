@@ -50,4 +50,6 @@ public:
 	void setCurr(TLink* _pCurr);
 
 	bool isDownLevel();
+
+	int GetLevel();
 }; 

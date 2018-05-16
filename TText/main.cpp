@@ -78,6 +78,51 @@ bool GoNext(int step) {
 	return true;
 }
 
+//int main() {
+//	TText text;
+//	TLink::InitMem(100);
+//
+//	text.InsertNextLine(" ");
+//	text.InsertNextLine("l1");
+//	text.goNextLink();
+//	text.InsertDownLine("l1.1");
+//	text.goDownLink();
+//	text.InsertDownLine("l1.1.1");
+//	text.goDownLink();
+//	text.InsertNextLine("l1.2.1");
+//	text.goNextLink();
+//
+//	text.goPrevLink();
+//	text.goPrevLink();
+//	text.goPrevLink();
+//	
+//	text.InsertNextLine("l2");
+//	text.goNextLink();
+//	text.InsertDownLine("l2.1");
+//	text.goDownLink();
+//	text.InsertDownLine("l2.1.1");
+//	text.goDownLink();
+//	text.InsertNextLine("l2.1.2");
+//	text.goNextLink();
+//
+//	text.goPrevLink();
+//	text.goPrevLink();
+//	
+//	text.InsertNextLine("l2.2");
+//	text.goNextLink();
+//
+//	text.goPrevLink();
+//	text.goPrevLink();
+//	
+//	text.Reset();
+//
+//	text.Print();
+//
+//	getchar();
+//
+//	return 0;
+//}
+
 int main() {
 	TText text;
 	TLink::InitMem(2000);
@@ -161,12 +206,14 @@ int main() {
 				if (coord.Y != 0) {
 
 					text.goPrevLink();
-					if (text.getCurr()->getDown() == tmplink) {
-						if(coord.Y != 1) MoveCursor(-1, -1);
-					}
-					else {
-						step = -text.DownCount() - 1;
-						GoNext(step);
+					if (text.getCurr() != tmplink) {
+						if (text.getCurr()->getDown() == tmplink) {
+							if (coord.Y != 1) MoveCursor(-1, -1);
+						}
+						else {
+							step = -text.DownCount() - 1;
+							GoNext(step);
+						}
 					}
 				}
 				Sleep(150);
@@ -176,8 +223,6 @@ int main() {
 				if (text.HaveDown()) {
 					text.goDownLink();
 					MoveCursor(1, 1);
-
-					Sleep(150);
 				}
 				else {
 					char tmpStr[80];
@@ -216,6 +261,7 @@ int main() {
 						MoveCursor(-tmpStrLen, 0);
 					}
 				}
+				Sleep(150);
 			}
 
 			if (GetAsyncKeyState(VK_TAB) && !GetAsyncKeyState(VK_LCONTROL)) {
