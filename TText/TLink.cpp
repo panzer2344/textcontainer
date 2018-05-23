@@ -72,6 +72,7 @@ void TLink::InitMem(size_t s) {
 }
 
 void TLink::MemClean(TText &txt) {
+	if (txt.getFirst() == NULL) return;
 	for (txt.Reset(); !txt.IsEnd(); txt.GoNext())
 		strcat(txt.getCurr()->str, "*");
 	TLink *tmp = mem.pFree;
@@ -81,7 +82,7 @@ void TLink::MemClean(TText &txt) {
 	}
 	tmp = mem.pFirst;
 	while (tmp != mem.pLast) {
-		if (strstr(tmp->str, "*") == NULL)
+		if (strlen(tmp->str) != 1)
 			tmp->str[strlen(tmp->str) - 1] = '\0';
 		tmp++;
 	}

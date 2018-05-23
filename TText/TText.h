@@ -15,7 +15,7 @@ class TText {
 	int level;
 
 private: 
-	void clearStack(std::stack<TLink* > stack);
+	void clearStack(std::stack<TLink* >& stack);
 
 public:
 	TText();
@@ -52,4 +52,6 @@ public:
 	bool isDownLevel();
 
 	int GetLevel();
+	TLink* getFirst();
+	void setFirst(TLink* _first);
 }; 

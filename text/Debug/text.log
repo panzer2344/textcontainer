@@ -1,5 +1,6 @@
 ﻿  main.cpp
-  TText.cpp
+  TLink.cpp
+c:\users\lexat\documents\github\textcontainer\ttext\tlink.cpp(65): warning C4018: <: несоответствие типов со знаком и без знака
   Создание кода...
   text.vcxproj -> C:\Users\lexat\Documents\GitHub\textcontainer\Debug\text.exe
   text.vcxproj -> C:\Users\lexat\Documents\GitHub\textcontainer\Debug\text.pdb (Full PDB)

@@ -239,7 +239,7 @@ int TText::DownCount() {
 	return count;
 }
 
-void TText::clearStack(std::stack<TLink* > stack) {
+void TText::clearStack(std::stack<TLink* >& stack) {
 	while (!stack.empty()) {
 		stack.pop();
 	}
@@ -271,6 +271,14 @@ bool TText::isDownLevel() {
 
 int TText::GetLevel() {
 	return level;
+}
+
+TLink* TText::getFirst() {
+	return pFirst;
+}
+
+void TText::setFirst(TLink* _first) {
+	pFirst = _first;
 }
 
 
