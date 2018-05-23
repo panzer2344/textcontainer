@@ -54,4 +54,7 @@ public:
 	int GetLevel();
 	TLink* getFirst();
 	void setFirst(TLink* _first);
+
+	void setStack(std::stack<TLink* > &stack);
+	std::stack<TLink* > getStack();
 }; 

@@ -34,6 +34,8 @@ void cls()
 	SetConsoleCursorPosition(hConsole, coordScreen);
 }
 
+
+
 bool WhereCursor(COORD &coord) {
 	HANDLE hndlOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -76,6 +78,66 @@ bool GoNext(int step) {
 	if(!MoveCursor(0, step))
 		return false;
 	return true;
+}
+
+bool ClearString(int level) {
+	COORD thisCoord;
+	HANDLE hndlOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	int length = 0;
+
+	if (!WhereCursor(thisCoord)) return false;
+
+	if (GetConsoleScreenBufferInfo(hndlOut, &csbi)) {
+		length = csbi.dwSize.X - level;
+	}
+	else {
+		return false;
+	}
+
+	for (int i = 0; i < length; i++)
+		std::cout << " ";
+
+	SetCursorPos(thisCoord);
+
+	return true;
+}
+
+void EditNextLine(TText &text, int &step, COORD& coord) {
+	char tmpStr[80];
+	int tmpStrLen = 0;
+	
+	text.InsertNextLine(" ");
+	text.goNextLink();
+	WhereCursor(coord);
+	cls();
+	text.Print();
+	SetCursorPos(coord);
+	GoNext(step);
+	WhereCursor(coord);
+
+	std::cout << "print here(to undo input - write /back): ";
+	std::cin >> tmpStr;
+
+	tmpStrLen = strlen(tmpStr);
+
+	if (!strcmp(tmpStr, "/back")) {
+		text.goPrevLink();
+		text.DeleteNext();
+		cls();
+		text.Print();
+		SetCursorPos(coord);
+		MoveCursor(0, -step);
+
+	}
+	else {
+		text.SetLine(tmpStr);
+		SetCursorPos(coord);
+		//MoveCursor(0, -1);
+		ClearString(text.GetLevel());
+		std::cout << tmpStr;
+		MoveCursor(-tmpStrLen, 0);
+	}
 }
 
 //int main() {
@@ -125,7 +187,7 @@ bool GoNext(int step) {
 
 int main() {
 	TText text;
-	TLink::InitMem(10);
+	TLink::InitMem(2000);
 	COORD coord = {0, 0};
 
 	//text.InsertNextLine(" ");
@@ -154,24 +216,41 @@ int main() {
 					}
 				}
 				else {
-					char tmpStr[80];
-					int tmpStrLen = 0;
+					EditNextLine(text, step, coord);
 
-					text.InsertNextLine(" ");
-					text.goNextLink();
-					WhereCursor(coord);
-					cls();
-					text.Print();
-					SetCursorPos(coord);
-					GoNext(step);
-					WhereCursor(coord);
+					//text.InsertNextLine(" ");
+					//text.goNextLink();
+					//WhereCursor(coord);
+					//cls();
+					//text.Print();
+					//SetCursorPos(coord);
+					//GoNext(step);
+					//WhereCursor(coord);
 
-					std::cout << "print here(to undo input - write /back): ";
-					std::cin >> tmpStr;
+					//std::cout << "print here(to undo input - write /back): ";
+					//std::cin >> tmpStr;
 
-					tmpStrLen = strlen(tmpStr);
+					//tmpStrLen = strlen(tmpStr);
 
-					if (!strcmp(tmpStr, "/back")) {
+					//if (!strcmp(tmpStr, "/back")) {
+					//	text.goPrevLink();
+					//	text.DeleteNext();
+					//	cls();
+					//	text.Print();
+					//	SetCursorPos(coord);
+					//	MoveCursor(0, -step);
+
+					//}
+					//else {
+					//	text.SetLine(tmpStr);
+					//	SetCursorPos(coord);
+					//	//MoveCursor(0, -1);
+					//	ClearString(text.GetLevel());
+					//	std::cout << tmpStr;
+					//	MoveCursor(-tmpStrLen, 0);
+					//}
+
+					/*if (!strcmp(tmpStr, "/back")) {
 						MoveCursor(0, -1);
 						std::cout << "                                              ";
 						MoveCursor(-46, -step);
@@ -191,7 +270,7 @@ int main() {
 								
 						std::cout << tmpStr;
 						MoveCursor(-tmpStrLen, 0);
-					}
+					}*/
 				}
 
 				Sleep(150);
@@ -208,7 +287,7 @@ int main() {
 					text.goPrevLink();
 					if (text.getCurr() != tmplink) {
 						if (text.getCurr()->getDown() == tmplink) {
-							if (coord.Y != 1) MoveCursor(-1, -1);
+							MoveCursor(-1, -1);
 						}
 						else {
 							step = -text.DownCount() - 1;
@@ -242,6 +321,24 @@ int main() {
 					tmpStrLen = strlen(tmpStr);
 
 					if (!strcmp(tmpStr, "/back")) {
+						text.goPrevLink();
+						text.DeleteDown();
+						cls();
+						text.Print();
+						SetCursorPos(coord);
+						MoveCursor(-1, -1);
+
+					}
+					else {
+						text.SetLine(tmpStr);
+						SetCursorPos(coord);
+						//MoveCursor(0, -1);
+						ClearString(text.GetLevel());
+						std::cout << tmpStr;
+						MoveCursor(-tmpStrLen, 0);
+					}
+
+					/*if (!strcmp(tmpStr, "/back")) {
 						MoveCursor(0, -1);
 						std::cout << "                                  ";
 						MoveCursor(-36, -1);
@@ -259,7 +356,7 @@ int main() {
 						MoveCursor(-tmpStrLen - 29, 0);
 						std::cout << tmpStr;
 						MoveCursor(-tmpStrLen, 0);
-					}
+					}*/
 				}
 				Sleep(150);
 			}
@@ -356,9 +453,18 @@ int main() {
 					SetCursorPos(coord);
 				}
 				else {
+					int step = 0;
 					TLink* tmp = text.getFirst()->getNext();
 					TLink::operator delete(text.getFirst());
 					text.setFirst(tmp);
+					text.setCurr(tmp);
+					
+					WhereCursor(coord);
+					cls();
+					text.Print();
+					SetCursorPos(coord);
+
+					if(tmp == NULL) EditNextLine(text, step, coord);
 				}
 
 				//TLink::MemClean(text);
@@ -366,8 +472,8 @@ int main() {
 			}
 
 			if (GetAsyncKeyState(VK_LCONTROL) && GetAsyncKeyState(VK_DELETE)) {
+				WhereCursor(coord);
 				cls();
-
 				TLink::printFree();
 
 				int tmp;
@@ -379,8 +485,8 @@ int main() {
 
 				std::cin >> tmp;
 				cls();
-
 				text.Print();
+				SetCursorPos(coord);
 
 				Sleep(150);
 			}

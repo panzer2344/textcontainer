@@ -73,6 +73,10 @@ void TLink::InitMem(size_t s) {
 
 void TLink::MemClean(TText &txt) {
 	if (txt.getFirst() == NULL) return;
+
+	TLink* cur = txt.getCurr();
+	std::stack<TLink* > tmpStack = txt.getStack();
+
 	for (txt.Reset(); !txt.IsEnd(); txt.GoNext())
 		strcat(txt.getCurr()->str, "*");
 	TLink *tmp = mem.pFree;
@@ -86,6 +90,9 @@ void TLink::MemClean(TText &txt) {
 			tmp->str[strlen(tmp->str) - 1] = '\0';
 		tmp++;
 	}
+
+	txt.setCurr(cur);
+	txt.setStack(tmpStack);
 }
 
 void TLink::printFree() {
@@ -105,7 +112,7 @@ TLink* TLink::getNext() {
 }
 
 TLink* TLink::getDown() {
-	return pDown;
+return pDown;
 }
 
 void TLink::setNext(TLink* tlNext) {

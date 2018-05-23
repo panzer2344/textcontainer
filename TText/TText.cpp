@@ -3,6 +3,7 @@
 
 TText::TText() {
 	pFirst = pCurrent = NULL;
+	level = 0;
 }
 
 void TText::goNextLink() {
@@ -16,13 +17,16 @@ void TText::goDownLink() {
 	if (pCurrent->getDown() != NULL) {
 		st.push(pCurrent);
 		pCurrent = pCurrent->getDown();
+		level++;
 	}
 }
 
 void TText::goPrevLink() {
+	TLink* tmp = pCurrent;
 	if (!st.empty()) { 
 		pCurrent = st.top();
 		st.pop();
+		if (tmp == pCurrent->getDown()) level--;
 	}
 }
 
@@ -143,8 +147,10 @@ void TText::RecursivePrint(TLink *tmp) {
 }
 
 void TText::Print() {
+	int tmp = level;
 	level = 0;
 	RecursivePrint(pFirst);
+	level = tmp;
 }
 
 void TText::RecursiveSaveText(TLink *tmp, std::ofstream& ofs) {
@@ -193,10 +199,25 @@ bool TText::IsEnd() {
 
 
 void TText::GoNext() {
+	if (st.top() == NULL) {
+		st.pop();
+		return;
+	}
 	pCurrent = st.top();
 	st.pop();
+	
+	if (pCurrent->getDown())
+		st.push(pCurrent->getDown());
+	if (pCurrent->getNext())
+		st.push(pCurrent->getNext());
+	if (!pCurrent->getDown() && !pCurrent->getNext()) {
+		st.push(NULL);
+	}
 
-	if (pCurrent != pFirst) {
+	if (pCurrent == pFirst) {
+		pCurrent = st.top();
+		st.pop();
+
 		if (pCurrent->getDown())
 			st.push(pCurrent->getDown());
 		if (pCurrent->getNext())
@@ -279,6 +300,14 @@ TLink* TText::getFirst() {
 
 void TText::setFirst(TLink* _first) {
 	pFirst = _first;
+}
+
+void TText::setStack(std::stack<TLink* > &stack) {
+	st = stack;
+}
+
+std::stack<TLink* > TText::getStack() {
+	return st;
 }
 
 
