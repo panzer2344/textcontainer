@@ -190,6 +190,11 @@ void TText::Reset() {
 	pCurrent = pFirst;
 	clearStack(st);
 	st.push(pCurrent);
+
+	//if (pFirst->getDown())
+	//	st.push(pFirst->getDown());
+	//if (pFirst->getNext())
+	//	st.push(pFirst->getNext());
 }
 
 
@@ -206,13 +211,10 @@ void TText::GoNext() {
 	pCurrent = st.top();
 	st.pop();
 	
-	if (pCurrent->getDown())
-		st.push(pCurrent->getDown());
 	if (pCurrent->getNext())
 		st.push(pCurrent->getNext());
-	if (!pCurrent->getDown() && !pCurrent->getNext()) {
-		st.push(NULL);
-	}
+	if (pCurrent->getDown())
+		st.push(pCurrent->getDown());
 
 	if (pCurrent == pFirst) {
 		pCurrent = st.top();
@@ -223,6 +225,19 @@ void TText::GoNext() {
 		if (pCurrent->getNext())
 			st.push(pCurrent->getNext());
 	}
+
+	if (st.empty()) {
+		st.push(NULL);
+	}
+
+	/*pCurrent = st.top();
+	st.pop();
+
+	if (pCurrent->getDown())
+		st.push(pCurrent->getDown());
+	if (pCurrent->getNext())
+		st.push(pCurrent->getNext());
+		*/
 }
 
 int TText::DownCount() {

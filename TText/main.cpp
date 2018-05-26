@@ -472,22 +472,38 @@ int main() {
 			}
 
 			if (GetAsyncKeyState(VK_LCONTROL) && GetAsyncKeyState(VK_DELETE)) {
-				WhereCursor(coord);
-				cls();
-				TLink::printFree();
+				//WhereCursor(coord);
+				//cls();
+				//TLink::printFree();
 
-				int tmp;
-				std::cin >> tmp;
-				cls();
+				//int tmp;
+				//std::cin >> tmp;
+				//cls();
+
+				//TLink::MemClean(text);
+				//TLink::printFree();
+
+				////std::cin >> tmp;
+				////cls();
+				//text.Print();
+				//SetCursorPos(coord);
 
 				TLink::MemClean(text);
-				TLink::printFree();
+				Sleep(150);
+			}
 
+			if (GetAsyncKeyState(VK_F2)) {
+				int tmp = 0;
+				WhereCursor(coord);
+
+				cls();
+				TLink::printFree();
 				std::cin >> tmp;
+				//getchar();
+
 				cls();
 				text.Print();
 				SetCursorPos(coord);
-
 				Sleep(150);
 			}
 

@@ -77,16 +77,21 @@ void TLink::MemClean(TText &txt) {
 	TLink* cur = txt.getCurr();
 	std::stack<TLink* > tmpStack = txt.getStack();
 
-	for (txt.Reset(); !txt.IsEnd(); txt.GoNext())
+	for (txt.Reset(); !txt.IsEnd(); txt.GoNext()) {
+		//char tmpStr[80]; 
+		//strcpy(tmpStr, txt.getCurr()->str);
+		//strcat(tmpStr, "*");
 		strcat(txt.getCurr()->str, "*");
+	}
 	TLink *tmp = mem.pFree;
 	while (tmp != NULL) {
-		strcpy(tmp->str, "*");
+		if(strcmp(tmp->str, "\\")) strcpy(tmp->str, "*");
 		tmp = tmp->pNext;
 	}
 	tmp = mem.pFirst;
 	while (tmp != mem.pLast) {
 		if (strlen(tmp->str) != 1)
+		//if(strstr(tmp->str, "*") == NULL)
 			tmp->str[strlen(tmp->str) - 1] = '\0';
 		tmp++;
 	}
@@ -99,9 +104,9 @@ void TLink::printFree() {
 	TLink *tmp = mem.pFree;
 	while (tmp != NULL) {
 		if (!strcmp(tmp->str, "\\")) { 
-			break;
+			tmp = tmp->pNext;
+			continue;
 		}
-
 		std::cout << tmp->str << std::endl;
 		tmp = tmp->pNext;
 	}

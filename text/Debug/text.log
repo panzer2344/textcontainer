@@ -1,2 +1,5 @@
-﻿  main.cpp
-  text.vcxproj -> D:\Git\textcontainer\Debug\text.exe
+﻿  TLink.cpp
+c:\users\lexat\documents\github\textcontainer\ttext\tlink.cpp(65): warning C4018: <: несоответствие типов со знаком и без знака
+cl : командная строка warning D9028: сбой минимальной повторной сборки, возврат к обычной сборке
+  text.vcxproj -> C:\Users\lexat\Documents\GitHub\textcontainer\Debug\text.exe
+  text.vcxproj -> C:\Users\lexat\Documents\GitHub\textcontainer\Debug\text.pdb (Full PDB)
